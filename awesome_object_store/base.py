@@ -3,7 +3,7 @@ import json
 from abc import ABC, abstractmethod
 from io import BytesIO, StringIO
 from logging import Logger
-from typing import IO, Generic, List, Optional, TypeVar
+from typing import BinaryIO, Generic, List, Optional, TypeVar
 
 import pandas as pd
 from starlette.datastructures import UploadFile
@@ -46,10 +46,10 @@ class BaseObjectStore(Generic[BucketType, BlobType], ABC):
     def put(
         self,
         name: str,
-        data: IO,
+        data: BinaryIO,
         length: Optional[int] = None,
         content_type: str = "application/octet-stream",
-        cache_control: str = "public, max-age=3600",
+        cache_control: Optional[str] = None,
     ) -> None:
         pass
 
@@ -95,7 +95,7 @@ class BaseObjectStore(Generic[BucketType, BlobType], ABC):
         data: pd.DataFrame,
         index=False,
         quoting=csv.QUOTE_MINIMAL,
-        cache_control: str = "public, max-age=3600",
+        cache_control: Optional[str] = None,
     ) -> None:
         """Uploads data from a pandas dataframe to an object in a bucket."""
         data_bytes = data.to_csv(index=index, quoting=quoting).encode("utf-8")
@@ -109,7 +109,7 @@ class BaseObjectStore(Generic[BucketType, BlobType], ABC):
         )
 
     def put_as_json(
-        self, name: str, data: dict, cache_control: str = "public, max-age=3600"
+        self, name: str, data: dict, cache_control: Optional[str] = None,
     ) -> None:
         """Uploads data from a json to an object in a bucket."""
         data_bytes = json.dumps(data).encode("utf-8")

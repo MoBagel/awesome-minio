@@ -19,6 +19,8 @@ def init_object_store(
     if protocol == "gcs":
         return GoogleCloudStore(bucket, logger)
     else:
+        assert isinstance(host, str), ValueError("Host must be provided for MinioStore")
+
         return MinioStore(
             bucket,
             host,

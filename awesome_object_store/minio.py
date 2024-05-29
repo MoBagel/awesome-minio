@@ -3,7 +3,7 @@ import json
 from logging import Logger
 from os import path
 from pathlib import Path
-from typing import IO, List, Optional
+from typing import BinaryIO, List, Optional
 
 import pandas as pd
 from minio import Minio, S3Error
@@ -19,7 +19,7 @@ class MinioStore(BaseObjectStore[Bucket, HTTPResponse]):
     def __init__(
         self,
         bucket: str,
-        host: str = None,
+        host: str,
         access_key: str = None,
         secret_key: str = None,
         secure: bool = False,
@@ -91,9 +91,10 @@ class MinioStore(BaseObjectStore[Bucket, HTTPResponse]):
     def put(
         self,
         name: str,
-        data: IO,
+        data: BinaryIO,
         length: Optional[int] = None,
         content_type: str = "application/octet-stream",
+        cache_control: Optional[str] = None
     ):
         """Uploads data from a stream to an object in a bucket."""
         if not length:
