@@ -49,6 +49,7 @@ class BaseObjectStore(Generic[BucketType, BlobType], ABC):
         data: IO,
         length: Optional[int] = None,
         content_type: str = "application/octet-stream",
+        cache_control: str = "public, max-age=3600",
     ) -> None:
         pass
 
@@ -89,20 +90,37 @@ class BaseObjectStore(Generic[BucketType, BlobType], ABC):
         self.remove_objects(objects_to_delete)
 
     def upload_df(
-        self, name: str, data: pd.DataFrame, index=False, quoting=csv.QUOTE_MINIMAL
+        self,
+        name: str,
+        data: pd.DataFrame,
+        index=False,
+        quoting=csv.QUOTE_MINIMAL,
+        cache_control: str = "public, max-age=3600",
     ) -> None:
         """Uploads data from a pandas dataframe to an object in a bucket."""
         data_bytes = data.to_csv(index=index, quoting=quoting).encode("utf-8")
         data_byte_stream = BytesIO(data_bytes)
 
-        self.put(name, data_byte_stream, content_type="application/csv")
+        self.put(
+            name,
+            data_byte_stream,
+            content_type="application/csv",
+            cache_control=cache_control,
+        )
 
-    def put_as_json(self, name: str, data: dict) -> None:
+    def put_as_json(
+        self, name: str, data: dict, cache_control: str = "public, max-age=3600"
+    ) -> None:
         """Uploads data from a json to an object in a bucket."""
         data_bytes = json.dumps(data).encode("utf-8")
         data_byte_stream = BytesIO(data_bytes)
 
-        self.put(name, data_byte_stream, content_type="application/json")
+        self.put(
+            name,
+            data_byte_stream,
+            content_type="application/json",
+            cache_control=cache_control,
+        )
 
     def fget_df(
         self,

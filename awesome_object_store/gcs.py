@@ -94,13 +94,14 @@ class GoogleCloudStore(BaseObjectStore[Bucket, Blob]):
         data: IO,
         length: Optional[int] = None,
         content_type: str = "application/octet-stream",
+        cache_control: str = "public, max-age=3600",
     ):
         """Uploads data from a stream to an object in a bucket."""
         if not length:
             data.seek(0)
 
         blob: Blob = self.client.bucket(self.bucket).blob(name)
-        blob.upload_from_file(data)
+        blob.cache_control = cache_control
 
     def get(self, name: str):
         """Gets data of an object."""
