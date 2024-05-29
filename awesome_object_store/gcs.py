@@ -102,6 +102,7 @@ class GoogleCloudStore(BaseObjectStore[Bucket, Blob]):
 
         blob: Blob = self.client.bucket(self.bucket).blob(name)
         blob.cache_control = cache_control
+        blob.upload_from_file(data, content_type=content_type)
 
     def get(self, name: str):
         """Gets data of an object."""
