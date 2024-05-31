@@ -28,7 +28,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "~=3.8"
+python = ">=3.9,<3.12"
 minio = "^7.1.1"
 pandas = "^1.4.1"
 starlette = ">=0.16.0"
