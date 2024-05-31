@@ -1,9 +1,14 @@
-name: develop
+name: ci
 
 on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
   push:
     branches:
-      - 'develop'
+      - develop
 
 jobs:
   main:
@@ -28,6 +33,9 @@ jobs:
 
       - name: Install dependencies
         run: poetry install
+
+      - name: Run Lint
+        run: poetry run poe lint
 
       - name: Run Test
         env:
